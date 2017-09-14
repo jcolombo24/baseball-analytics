@@ -1,52 +1,45 @@
-<!DOCTYPE html>
-
-<html>
+{% load staticfiles %}
 
 <head>
-    {% csrf_token %}
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+     
+</head>
+
+{% block content %}
+<body>
+<link rel="stylesheet" type="text/css" href="{% static "css/jquery.dataTables.css" %}">
+    <div class="col-sm-8 col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <table id="pitcherview" class="display responsive" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Player Name</th>
+                            <th>Game Date</th>
+                            <th>Pitch Type</th>
+                            <th>PFX X</th>
+                        </tr>
+                        <tr></tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+    <script src="{% static "js/dataTables/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "js/jquery/jquery-1.12.4.js" %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-                    var oTable: $('#pitcherlist').dataTable({
-                        "Dom": 'T<"container">lfrtip'
-                        "Processing": true,
-                        "ServerSide": true,
-                        "Ajax": { % url 'pitcherlist' %
-                        },
-                        "data": [],
-                        "columns": [{
-                            "data": "player_name"
-                        }, {
-                            "data": "game_date"
-                        }, {
-                            "data": "pitch_type"
-                        }, {
-                            "data": "pfx_x"
-                        }, ]
-                    });
+            var oTable = $('#pitcherview').dataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": "{% url 'pitcherlist' %}",
+            });
+        });
     </script>
-</head>
-
-<body>
-    {% block content %}
-    <table id="pitcherlist" class="display responsive" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th>Player Name</th>
-                <th>Game Date</th>
-                <th>Pitch Type</th>
-                <th>PFX X</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>Player Name</th>
-                <th>Game Date</th>
-                <th>Pitch Type</th>
-                <th>PFX X</th>
-            </tr>
-        </tfoot>
-    </table>
-    {% endblock %}
+</html>
