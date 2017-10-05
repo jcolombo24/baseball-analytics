@@ -1,45 +1,78 @@
-{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-
-     
+    {% load staticfiles %} {% csrf_token %}
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 
-{% block content %}
 <body>
-<link rel="stylesheet" type="text/css" href="{% static "css/jquery.dataTables.css" %}">
-    <div class="col-sm-8 col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <table id="pitcherview" class="display responsive" cellspacing="0" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Player Name</th>
-                            <th>Game Date</th>
-                            <th>Pitch Type</th>
-                            <th>PFX X</th>
-                        </tr>
-                        <tr></tr>
-                    </thead>
-                </table>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="text-center">Here Comes the Deuce!</h1>
+            <h4 class="text-center"><em>"..and when you speak of me, speak well."</em></h4>
+        </div>
+    </div>
+
+    {% load crispy_forms_tags %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2">
+                {% crispy form %}
+            </div>
+            <div class="col-sm-10">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table id="pitcherlist" class="display responsive" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Player Name</th>
+                                    <th>Game Date</th>
+                                    <th>Pitch Type</th>
+                                    <th>Release Speed</th>
+                                    <th>PFX X</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-{% endblock %}
 
 
-
-
-    <script src="{% static "js/dataTables/jquery.dataTables.min.js" %}"></script>
-    <script src="{% static "js/jquery/jquery-1.12.4.js" %}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            var oTable = $('#pitcherview').dataTable({
+            var oTable = $('#pitcherlist').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": "{% url 'pitcherlist' %}",
             });
+
+
+
+            var frm = $('#filter_form');
+            frm.submit(function() {
+                $.ajax({
+                    type: frm.attr('method'),
+                    url: frm.attr('action'),
+                    data: frm.serialize(),
+                    success: function(data) {
+                        oTable.ajax.reload(data);
+                        $('#submit-id-submit').prop('disabled', false);
+                    },
+                    error: function(data) {
+                        alert('Sorry, something went wrong. Please try again.');
+                    }
+                });
+                return false;
+            });
         });
     </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 </html>
