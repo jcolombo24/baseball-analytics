@@ -48,11 +48,11 @@
     <script type="text/javascript">
         $(document).ready(function() {
             var oTable = $('#pitcherlist').DataTable({
+                "responsive": true,
                 "processing": true,
                 "serverSide": true,
                 "ajax": "{% url 'pitcherlist' %}",
             });
-
 
 
             var frm = $('#filter_form');
@@ -62,8 +62,9 @@
                     url: frm.attr('action'),
                     data: frm.serialize(),
                     success: function(data) {
-                        oTable.ajax.reload(data);
+                        oTable.ajax.reload();
                         $('#submit-id-submit').prop('disabled', false);
+                        console.log(data);
                     },
                     error: function(data) {
                         alert('Sorry, something went wrong. Please try again.');
