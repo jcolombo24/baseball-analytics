@@ -18,12 +18,11 @@ class PitcherFilterForm(forms.Form):
         super(PitcherFilterForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'filter_form'
-        self.helper.form_method = 'post'
-        self.helper.form_action = '.'
+        self.helper.form_method = 'GET'
+        self.helper.form_action = 'pitcherlist'
         self.helper.layout = Layout(
             Field('player_name'),
             FormActions(
                 Submit('submit', 'Filter'),
                 Reset('reset', 'Reset'),),
-                )
-                           
+                )                         
