@@ -1,27 +1,26 @@
 from django.shortcuts import render
+from urllib.parse import urlencode, parse_qs
 from django.conf import settings
 from django.http import HttpResponse
 from .models import pitcher
-from django.urls import reverse
+from django.db.models import Q
+from django.core.urlresolvers import reverse
 from django_datatables_view.base_datatable_view import BaseDatatableView
 import json
 from analyzer.forms import PitcherFilterForm
 
 def pitcher_view(request):
-    form = PitcherFilterForm(request.POST)
+    form = PitcherFilterForm(request.GET)
     data = reverse('pitcherlist')
-    if request.method == 'POST' and request.is_ajax:
-        params = request.POST.copy()
-        data = ('%s?%s' % (reverse('pitcherlist'), ''.join(
-            ['%s=%s&' % (k, v) for k, v in params.items()])))\
-            .rstrip('&')
-
+    
+    if request.method == 'GET' and request.is_ajax():
+        data = '%s' % (reverse('pitcherlist'))
         return HttpResponse(json.dumps(data), content_type='application/json')
     
     return render(
         request,
         'analyzer/index.html',
-        {'form': form}
+        {'form': form, 'data': data}
     )
           
 class pitcher_list_json(BaseDatatableView):
@@ -29,9 +28,12 @@ class pitcher_list_json(BaseDatatableView):
     columns = ['player_name', 'game_date','pitch_type', 'release_speed', 'pfx_x']
     order_columns = ['player_name', 'game_date','pitch_type', 'release_speed', 'pfx_x']
     
-    def render_column(self, row, column):
-            return super(pitcher_list_json, self).render_column(row, column)
+    def get_initial_queryset(self):
+        return pitcher.objects.all()
     
     def filter_queryset(self, qs):
-        search = pitcher.objects.all()
+        player_name = self.request.GET.get('player_name')
+        if player_name:
+            qs = pitcher.objects.filter(player_name=player_name)
         return qs
+    
